@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Auto Gpt Tg Bot</title>
+        <style>
+            body {
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                font-family: Arial, sans-serif;
+                background-color: #fff;
+                color: #333;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+
+            .container {
+                width: 80%;
+                max-width: 600px;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                transition: background-color 0.3s ease;
+            }
+
+            body.dark-mode {
+                background-color: #333;
+                color: #fff;
+            }
+
+            .container h2 {
+                font-size: 24px;
+                margin-bottom: 15px;
+                color: inherit;
+            }
+
+            label {
+                display: block;
+                margin-top: 15px;
+                font-size: 16px;
+                color: inherit;
+            }
+
+            input,
+            textarea {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 14px;
+                color: inherit;
+                background-color: #f0f0f0;
+                transition: background-color 0.3s ease;
+            }
+
+            input:focus,
+            textarea:focus {
+                outline: none;
+                background-color: #e0e0e0;
+            }
+
+            button {
+                display: block;
+                margin-top: 15px;
+                padding: 10px 15px;
+                background-color: #333;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .dark-mode-icon {
+                position: fixed;
+                bottom: 50px;
+                right: 30px;
+                font-size: 24px;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+
+            .dark-mode-icon.light {
+                transform: rotate(180deg);
+            }
+
+            .dark-mode .container {
+                background-color: #333;
+            }
+
+            .dark-mode input,
+            .dark-mode textarea {
+                background-color: #444;
+            }
+
+            .dark-mode button {
+                background-color: #fff;
+                color: #333;
+            }
+
+            /* Toast container */
+            .toast-container {
+                position: fixed;
+                bottom: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+            }
+
+            /* Toast notification */
+            .toast {
+                position: relative;
+                padding: 12px 40px 12px 12px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+                color: #333;
+                display: flex;
+                align-items: center;
+                max-width: 300px;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .toast.success {
+                background-color: #4caf50;
+                color: #fff;
+            }
+
+            .toast.error {
+                background-color: #ff5252;
+                color: #fff;
+            }
+
+            /* Toast icons */
+            .toast-icon {
+                position: absolute;
+                top: 50%;
+                right: 12px;
+                transform: translateY(-50%);
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .toast.success .toast-icon {
+                color: #fff;
+            }
+
+            .toast.error .toast-icon {
+                color: #fff;
+            }
+
+            .toast-content {
+                padding-right: 40px;
+                /* Adjust this value as needed */
+            }
+
+            .input-wrapper {
+                top: 5px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: #f0f0f0;
+                transition: background-color 0.3s ease;
+            }
+
+            .input-wrapper input {
+                flex: 1;
+                border: none;
+                outline: none;
+                padding: 10px;
+                background-color: transparent;
+                color: #333;
+            }
+
+            .input-icon-link {
+                display: flex;
+                /* Change display to flex */
+                align-items: center;
+                /* Center vertically */
+                margin-left: 5px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .input-icon {
+                font-size: 20px;
+            }
+
+            .dark-mode .input-wrapper {
+                background-color: #f0f0f0;
+            }
+
+            /* Styles for the Active Bots information */
+            .active-bots-info {
+                display: flex;
+                align-items: center;
+                margin-top: 10px;
+                /* Adjust this margin as needed */
+                justify-content: flex-end;
+                /* Align to the right */
+            }
+
+            /* Add some margin between the button and the Active Bots info */
+            button+.active-bots-info {
+                margin-left: 10px;
+                /* Adjust this margin as needed */
+            }
+
+            /* Active bot count link */
+            .active-bots-info a {
+                text-decoration: underline;
+                /* Add underline to indicate link */
+                color: #333;
+                /* Set default color for normal mode */
+                transition: color 0.3s ease;
+                /* Add transition effect for color change */
+            }
+
+            /* Dark mode style */
+            body.dark-mode .active-bots-info a {
+                color: white;
+                /* Change to your desired color for dark mode */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Add BOT Token</h2>
+            <form id="cookieForm">
+                <label for="botusername">Enter your BOT Username:</label>
+                <div class="input-wrapper">
+                    <input id="botusername" type="text" name="botusername" placeholder="Your Bot Username Without @" required>
+                </div>
+                <label for="bottoken">Enter your BOT Token:</label>
+                <div class="input-wrapper">
+                    <input id="bottoken" type="text" name="bottoken" placeholder="Your BOT Token" required>
+                    <a href="https://t.me/BotFather" target="_blank" class="input-icon-link">
+                        <span class="input-icon">🔑</span>
+                    </a>
+                </div>
+                <button type="button" onclick="submitData()">Submit</button>
+                <div class="active-bots-info"> Active Bots :&nbsp; <a href="/ActiveBots">
+                        <span id="activeBotCount" class="activeBotCount">Loading...</span>
+                    </a>
+                </div>
+                <div class="dark-mode-icon" onclick="toggleDarkMode()"> 🌑 </div>
+                <!-- Toast container -->
+                <div id="toast-container" class="toast-container"></div>
+                <script>
+                    function submitData() {
+                        const bottokenValue = document.getElementById('bottoken').value.trim();
+                        const botusernameValue = document.getElementById('botusername').value.trim();
+                        if (!/^\d/.test(bottokenValue)) {
+                            // Show error toast
+                            showToast('Invalid BOT Token.', 'error');
+                            return;
+                        }
+                        if (bottokenValue.length < 10 || !bottokenValue.includes(":")) {
+                            // Show error toast
+                            showToast('Invalid BOT Token.', 'error');
+                            return;
+                        }
+                        // Send the token to your server for saving
+                        fetch('/save-token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `token=${encodeURIComponent(bottokenValue)}&username=${encodeURIComponent(botusernameValue)}`
+                        }).then(response => response.json()).then(data => {
+                            if (data.success) {
+                                // Show success toast
+                                showToast(data.message, 'success');
+                            } else {
+                                // Show error toast
+                                showToast(data.message, 'error');
+                            }
+                        }).catch(error => {
+                            showToast('Token Saved Successfully.', 'success');
+                        });
+                    }
+
+                    function toggleDarkMode() {
+                        document.body.classList.toggle('dark-mode');
+                        const darkModeIcon = document.querySelector('.dark-mode-icon');
+                        darkModeIcon.classList.toggle('light');
+                        darkModeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌑';
+                    }
+                    // Function to show toast notification
+                    function showToast(message, type) {
+                        const toastContainer = document.getElementById('toast-container');
+                        // Create a new toast element
+                        const toast = document.createElement('div');
+                        toast.className = `toast ${type}`;
+                        toast.textContent = message;
+                        // Create a toast icon element
+                        const toastIcon = document.createElement('div');
+                        toastIcon.className = 'toast-icon';
+                        toastIcon.innerHTML = type === 'success' ? '✔️' : '✖️';
+                        toast.appendChild(toastIcon);
+                        // Append the toast to the container
+                        toastContainer.appendChild(toast);
+                        // Show the toast
+                        setTimeout(() => {
+                            toast.style.opacity = '1';
+                            toast.style.transform = 'translateY(0)';
+                        }, 10);
+                        // Remove the toast after a certain time (e.g., 3000 milliseconds)
+                        setTimeout(() => {
+                            toast.style.opacity = '0';
+                            toast.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                toast.remove();
+                            }, 300);
+                        }, 3000);
+                    }
+                    // Fetch active bot count from the server
+                    fetch('/active-bot-count').then(response => response.json()).then(data => {
+                        console.log(data); // Log the data received from the server
+                        const activeBotCountElement = document.getElementById('activeBotCount');
+                        activeBotCountElement.textContent = data.activeBotCount;
+                    }).catch(error => {
+                        console.error('Error fetching active bot count:', error);
+                    });
+                </script>
+    </body>
+</html>
